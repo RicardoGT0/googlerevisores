@@ -5,7 +5,10 @@
  */
 package google_search;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,28 +17,48 @@ import jxl.read.biff.BiffException;
 
 public class Excel_RW {
 
-   
     Workbook workbook;
     Sheet sheet;
+
     public Excel_RW() throws IOException {
         try {
-            
             this.workbook = Workbook.getWorkbook(new File("datosrevisores.xls"));
-
             this.sheet = this.workbook.getSheet(0);
-        
         } catch (BiffException ex) {
             Logger.getLogger(Excel_RW.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    private String[] getnombres(){
+        String[] nombres = new String[280];
+        try {
+            File file = new File("nombres.txt");
+            BufferedReader entrada;
+            entrada = new BufferedReader(new FileReader(file));
+           
+            
+            for (int i = 0; i < 278; i++) {//while(entrada.ready())
+                nombres[i] = entrada.readLine();
+                System.out.println(nombres[i]);
+            }
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Excel_RW.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Excel_RW.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return nombres;
+    }
+
     public String[][] leer_xls() {
         String[][] lista = new String[3][280];
-
-        for (int col = 0; col < 3; col++) {
+        String[] nombres=getnombres();
+        
+        for (int col = 1; col < 3; col++) {
             for (int fila = 1; fila < 279; fila++) {
                 Cell celda = this.sheet.getCell(col, fila);
                 lista[col][fila] = celda.getContents();
+                lista[0][fila]=nombres[fila];
 
             }
         }
