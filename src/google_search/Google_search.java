@@ -18,14 +18,27 @@ public class Google_search {
     public static void main(String[] args) throws Exception {
 
         String[][] datos;
-        Excel_Read excel = new Excel_Read();
+        Excel_RW excel = new Excel_RW();
         datos = excel.leer_xls();
+        
+        String[] hp=find(datos);
+        
+        excel.escribir(hp);
+        
 
-        String[] hp = new String[280];
+    }
+    
+    private static String[] find(String[][] datos) throws Exception{
+        
+        String[] hp = new String[280];//HomePages
 
         for (int fila = 1; fila < 279; fila++) {
             String email = datos[1][fila];
-            String name = datos[0][fila];
+            
+            //byte[] temp = datos[0][fila].getBytes();
+            //String name=new String(temp, "UTF-8");
+            String name=datos[0][fila];
+            
             if (email == "") {
                 email = datos[0][fila];
             }
@@ -52,10 +65,11 @@ public class Google_search {
             }
             
             System.out.println("***************************************************************");
-            System.out.println(name);
+            System.out.print(name);
             System.out.println(url);
+            hp[fila]=url;
         }
-
+        return hp;
     }
 
     private static String check(Google results, String name) throws UnsupportedEncodingException {
