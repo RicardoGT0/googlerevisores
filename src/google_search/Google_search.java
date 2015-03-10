@@ -18,8 +18,8 @@ public class Google_search {
     public static void main(String[] args) throws Exception {
 
         String[][] datos;
-        Excel_RW excel = new Excel_RW();
-        datos = excel.leer_xls();
+        Files_rw excel = new Files_rw();
+        datos = excel.leer();
         
         String[] hp=find(datos);
         
@@ -32,7 +32,7 @@ public class Google_search {
         
         String[] hp = new String[280];//HomePages
 
-        for (int fila = 1; fila < 278; fila++) {
+        for (int fila = 0; fila < 279; fila++) {
             String email = datos[1][fila];
             
             //byte[] temp = datos[0][fila].getBytes();
