@@ -65,7 +65,7 @@ public class Google_search {
             }
             
             System.out.println("***************************************************************");
-            System.out.print(name);
+            System.out.println(name);
             System.out.println(url);
             hp[fila]=url;
         }

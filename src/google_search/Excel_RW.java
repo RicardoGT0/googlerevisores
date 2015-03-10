@@ -39,7 +39,6 @@ public class Excel_RW {
             
             for (int i = 0; i < 278; i++) {//while(entrada.ready())
                 nombres[i] = entrada.readLine();
-                System.out.println(nombres[i]);
             }
             
         } catch (FileNotFoundException ex) {
