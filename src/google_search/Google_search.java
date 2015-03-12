@@ -20,12 +20,16 @@ public class Google_search {
     public static void main(String[] args) throws Exception {
 
         String[][] datos;
-        Files_rw excel = new Files_rw();
-        datos = excel.leer();
+        Files_rw file = new Files_rw();
+        datos = file.leer();
 
-        String[] hp = find(datos);
+        for (int i = 0; i < 10; i++) {
 
-        excel.escribir(hp);
+            String[] hp = find(datos);
+
+            String filename = "homepages"+String.valueOf(i)+".xls";
+            file.escribir(hp, filename);
+        }
 
     }
 
@@ -35,6 +39,11 @@ public class Google_search {
             Google results = GetGoogleResults("\"" + email + "\"");
             if (results.getResponseData() != null) {
                 url = check(results, name);
+            } else {
+                results = GetGoogleResults(email);
+                if (results.getResponseData() != null) {
+                    url = check(results, name);
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(Google_search.class.getName()).log(Level.SEVERE, null, ex);
@@ -48,6 +57,11 @@ public class Google_search {
             Google results = GetGoogleResults("\"" + name + "\"" + " -facebook -linkedin -google+ -twitter -youtube -instagram -pinterest -misprofesores");
             if (results.getResponseData() != null) {
                 url = check(results, name);
+            } else {
+                results = GetGoogleResults("\"" + name + "\"" + " +scholar.google");
+                if (results.getResponseData() != null) {
+                    url = check(results, name);
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(Google_search.class.getName()).log(Level.SEVERE, null, ex);
@@ -87,10 +101,10 @@ public class Google_search {
     }
 
     private static Boolean verificacion(String name, String title, String content) {
-        
-        title=title.toLowerCase();
-        content=content.toLowerCase();
-        
+
+        title = title.toLowerCase();
+        content = content.toLowerCase();
+
         Boolean verificacion0 = title.contains("home") || title.contains("page");
         Boolean verificacion1 = title.contains("Citas de Google Académico");
 
@@ -102,7 +116,7 @@ public class Google_search {
                 break;
             }
         }
-        
+
         Boolean verificacion3 = false;
         for (String val : name.split(" ")) {
             verificacion3 = content.contains(val.toLowerCase());
@@ -110,7 +124,7 @@ public class Google_search {
                 break;
             }
         }
-        
+
         Boolean verif = verificacion0 || verificacion1 || verificacion2 || verificacion3;
         return verif;
     }

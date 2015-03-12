@@ -53,11 +53,11 @@ public class Files_rw {
         return lista;
     }
 
-    public void escribir(String[] pages) {
+    public void escribir(String[] pages, String file) {
         try {
             int c = 0;
 
-            WritableWorkbook workbook = Workbook.createWorkbook(new File("homepages.xls"));
+            WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
             WritableSheet sheet = workbook.createSheet("Resultado", 0);
 
             for (int fila = 1; fila < 279; fila++) {
