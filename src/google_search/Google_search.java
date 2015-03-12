@@ -63,21 +63,19 @@ public class Google_search {
         for (int fila = 0; fila < 279; fila++) {
             String email = datos[2][fila];
             String name = datos[0][fila];
-            String url="";
-            
+            String url = "";
+
             if (email.isEmpty()) {
                 email = datos[1][fila];
-                if (email.isEmpty()==false){
-                    url=finder_email(name, email);
+                if (email.isEmpty() == false) {
+                    url = finder_email(name, email);
                 }
+            } else {
+                url = finder_email(name, email);
             }
-            else{
-                url=finder_email(name, email);
-            }
-
 
             if (url.isEmpty()) {
-               url=finder_name(name);
+                url = finder_name(name);
             }
 
             System.out.println("***************************************************************");
@@ -87,25 +85,33 @@ public class Google_search {
         }
         return hp;
     }
-    
-    private static Boolean verificacion(String name,String title,String content){
-        
-        
-        Boolean verificacion1;
-        verificacion1 = title.toLowerCase().contains("page");
 
-            Boolean verificacion2 = false;
+    private static Boolean verificacion(String name, String title, String content) {
+        
+        title=title.toLowerCase();
+        content=content.toLowerCase();
+        
+        Boolean verificacion0 = title.contains("home") || title.contains("page");
+        Boolean verificacion1 = title.contains("Citas de Google Académico");
 
-            for (String retval : name.split(" ")) {
-                verificacion2 = title.toLowerCase().contains(retval.toLowerCase());
-                if (verificacion2) {
-                    break;
-                }
+        Boolean verificacion2 = false;
+
+        for (String val : name.split(" ")) {
+            verificacion2 = title.contains(val.toLowerCase());
+            if (verificacion2) {
+                break;
             }
+        }
+        
+        Boolean verificacion3 = false;
+        for (String val : name.split(" ")) {
+            verificacion3 = content.contains(val.toLowerCase());
+            if (verificacion3) {
+                break;
+            }
+        }        
 
-            Boolean verificacion3 = title.toLowerCase().contains("Citas de Google Académico");
-
-        Boolean verif = verificacion1 || verificacion2 || verificacion3;
+        Boolean verif = verificacion0 || verificacion1 || verificacion2 || verificacion3;
         return verif;
     }
 
