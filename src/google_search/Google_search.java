@@ -109,8 +109,8 @@ public class Google_search {
             if (verificacion3) {
                 break;
             }
-        }        
-
+        }
+        
         Boolean verif = verificacion0 || verificacion1 || verificacion2 || verificacion3;
         return verif;
     }
