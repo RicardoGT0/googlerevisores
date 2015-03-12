@@ -12,6 +12,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Google_search {
 
@@ -20,67 +22,77 @@ public class Google_search {
         String[][] datos;
         Files_rw excel = new Files_rw();
         datos = excel.leer();
-        
-        String[] hp=find(datos);
-        
+
+        String[] hp = find(datos);
+
         excel.escribir(hp);
-        
 
     }
-    
-    private static String[] find(String[][] datos) throws Exception{
-        
-        String[] hp = new String[280];//HomePages
 
-        for (int fila = 0; fila < 279; fila++) {
-            String email = datos[1][fila];
-            
-            //byte[] temp = datos[0][fila].getBytes();
-            //String name=new String(temp, "UTF-8");
-            String name=datos[0][fila];
-            
-            if (email == "") {
-                email = datos[0][fila];
-            }
-
-            String url = "";
+    private static String finder_email(String name, String email) {
+        String url = "";
+        try {
             Google results = GetGoogleResults("\"" + email + "\"");
             if (results.getResponseData() != null) {
                 url = check(results, name);
             }
+        } catch (Exception ex) {
+            Logger.getLogger(Google_search.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return url;
+    }
 
-            email = datos[2][fila];
-            if (url == "" && email != "") {
-                results = GetGoogleResults("\"" + email + "\"");
-                if (results.getResponseData() != null) {
-                    url = check(results, name);
+    private static String finder_name(String name) {
+        String url = "";
+        try {
+            Google results = GetGoogleResults("\"" + name + "\"" + " -facebook -linkedin -google+ -twitter -youtube -instagram -pinterest -misprofesores");
+            if (results.getResponseData() != null) {
+                url = check(results, name);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Google_search.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return url;
+    }
+
+    private static String[] find(String[][] datos) throws Exception {
+
+        String[] hp = new String[280];//HomePages
+
+        for (int fila = 0; fila < 279; fila++) {
+            String email = datos[2][fila];
+            String name = datos[0][fila];
+            String url="";
+            
+            if (email.isEmpty()) {
+                email = datos[1][fila];
+                if (email.isEmpty()==false){
+                    url=finder_email(name, email);
                 }
             }
-            
-            if (url == "") {
-                results = GetGoogleResults("\"" + name + "\"" + " -facebook -linkedin -google+ -twitter -youtube -instagram -pinterest -misprofesores");
-                if (results.getResponseData() != null) {
-                    url = check(results, name);
-                }
+            else{
+                url=finder_email(name, email);
             }
-            
+
+
+            if (url.isEmpty()) {
+               url=finder_name(name);
+            }
+
             System.out.println("***************************************************************");
             System.out.println(name);
             System.out.println(url);
-            hp[fila]=url;
+            hp[fila] = url;
         }
         return hp;
     }
-
-    private static String check(Google results, String name) throws UnsupportedEncodingException {
-
-        for (int i = 0; i < results.getResponseData().getResults().size(); i++) {
-
-            String title = results.getResponseData().getResults().get(i).getTitle();
-            String url = URLDecoder.decode(results.getResponseData().getResults().get(i).getUrl(), "UTF-8");
-            String Content = results.getResponseData().getResults().get(i).getContent();
-
-            Boolean verificacion1 = title.toLowerCase().contains("page");
+    
+    private static Boolean verificacion(String name,String title,String content){
+        
+        
+        Boolean verificacion1;
+        verificacion1 = title.toLowerCase().contains("page");
 
             Boolean verificacion2 = false;
 
@@ -93,7 +105,19 @@ public class Google_search {
 
             Boolean verificacion3 = title.toLowerCase().contains("Citas de Google Académico");
 
-            if (verificacion1 || verificacion2 || verificacion3) {
+        Boolean verif = verificacion1 || verificacion2 || verificacion3;
+        return verif;
+    }
+
+    private static String check(Google results, String name) throws UnsupportedEncodingException {
+
+        for (int i = 0; i < results.getResponseData().getResults().size(); i++) {
+
+            String title = results.getResponseData().getResults().get(i).getTitle();
+            String url = URLDecoder.decode(results.getResponseData().getResults().get(i).getUrl(), "UTF-8");
+            String content = results.getResponseData().getResults().get(i).getContent();
+
+            if (verificacion(name, title, content)) {
                 return url;
             }
 
