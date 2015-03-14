@@ -23,9 +23,16 @@ public class Google_search {
         Files_rw excel = new Files_rw();
         datos = excel.leer();
 
-        String[] hp = find(datos);
+        String[] hp = new String[280];//HomePages
 
-        excel.escribir(hp);
+        for (int i = 0; i < 300; i++) {
+            hp = find(datos, hp);
+            String filename = "homepages.xls";
+            excel.escribir(hp, filename);
+        }
+
+        String filename = "homepages.xls";
+        excel.escribir(hp, filename);
 
     }
 
@@ -35,7 +42,13 @@ public class Google_search {
             Google results = GetGoogleResults("\"" + email + "\"");
             if (results.getResponseData() != null) {
                 url = check(results, name);
-            }
+            } /*else {//solo usar en caso de emergencia
+             results = GetGoogleResults(email);
+             if (results.getResponseData() != null) {
+             url = check(results, name);
+             }
+             }*/
+
         } catch (Exception ex) {
             Logger.getLogger(Google_search.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -56,54 +69,55 @@ public class Google_search {
         return url;
     }
 
-    private static String[] find(String[][] datos) throws Exception {
+    private static String[] find(String[][] datos, String[] hp) throws Exception {
 
-        String[] hp = new String[280];//HomePages
-
-        for (int fila = 0; fila < 279; fila++) {
+        for (int fila = 0; fila < 278; fila++) {
             String email = datos[2][fila];
             String name = datos[0][fila];
-            String url="";
-            
-            if (email.isEmpty()) {
-                email = datos[1][fila];
-                if (email.isEmpty()==false){
-                    url=finder_email(name, email);
+            String url = "";
+            String home = hp[fila];
+            if (home == null) {
+                home = "";
+            }
+            if (home.isEmpty()) {
+
+                if (email.isEmpty()) {
+                    email = datos[1][fila];
+                    if (email.isEmpty() == false) {
+                        url = finder_email(name, email);
+                    }
+                } else {
+                    url = finder_email(name, email);
                 }
-            }
-            else{
-                url=finder_email(name, email);
-            }
 
+                if (url.isEmpty()) {
+                    url = finder_name(name);
+                }
 
-            if (url.isEmpty()) {
-               url=finder_name(name);
+                System.out.println("***************************************************************");
+                System.out.println(name);
+                System.out.println(url);
+                hp[fila] = url;
             }
-
-            System.out.println("***************************************************************");
-            System.out.println(name);
-            System.out.println(url);
-            hp[fila] = url;
         }
         return hp;
     }
-    
-    private static Boolean verificacion(String name,String title,String content){
-        
-        
+
+    private static Boolean verificacion(String name, String title, String content) {
+
         Boolean verificacion1;
         verificacion1 = title.toLowerCase().contains("page");
 
-            Boolean verificacion2 = false;
+        Boolean verificacion2 = false;
 
-            for (String retval : name.split(" ")) {
-                verificacion2 = title.toLowerCase().contains(retval.toLowerCase());
-                if (verificacion2) {
-                    break;
-                }
+        for (String retval : name.split(" ")) {
+            verificacion2 = title.toLowerCase().contains(retval.toLowerCase());
+            if (verificacion2) {
+                break;
             }
+        }
 
-            Boolean verificacion3 = title.toLowerCase().contains("Citas de Google Académico");
+        Boolean verificacion3 = title.toLowerCase().contains("Citas de Google Académico");
 
         Boolean verif = verificacion1 || verificacion2 || verificacion3;
         return verif;

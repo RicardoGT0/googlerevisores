@@ -53,30 +53,33 @@ public class Files_rw {
         return lista;
     }
 
-    public void escribir(String[] pages) {
+    public void escribir(String[] pages, String filename) {
         try {
             int c = 0;
 
-            WritableWorkbook workbook = Workbook.createWorkbook(new File("homepages.xls"));
-            WritableSheet sheet = workbook.createSheet("Resultado", 0);
-
-            for (int fila = 1; fila < 279; fila++) {
-                String page = pages[fila - 1];
-                sheet.addCell(new jxl.write.Label(0, fila, page));
-            }
-            workbook.write();
-            workbook.close();
-
-            for (String page : pages) {
-                if (page != "") {
+            for (String page: pages) {
+                
+                if (page.isEmpty()==false) {
                     c++;
                 }
             }
+            
+            WritableWorkbook workbook;
+            workbook = Workbook.createWorkbook(new File(filename));
+            WritableSheet sheet = workbook.createSheet("Resultado", 0);
+            
+            for (int fila = 0; fila < 278; fila++) {
+                String page = pages[fila];
+                sheet.addCell(new jxl.write.Label(0, fila, page));
+            }
+            sheet.addCell(new jxl.write.Label(0, 279, String.valueOf(c)));
+            workbook.write();
+            workbook.close();
+
+            
             System.out.println(c);
 
-        } catch (IOException ex) {
-            Logger.getLogger(Files_rw.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (WriteException ex) {
+        } catch (IOException | WriteException ex) {
             Logger.getLogger(Files_rw.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
