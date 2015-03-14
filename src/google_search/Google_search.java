@@ -31,9 +31,6 @@ public class Google_search {
             excel.escribir(hp, filename);
         }
 
-        String filename = "homepages.xls";
-        excel.escribir(hp, filename);
-
     }
 
     private static String finder_email(String name, String email) {
