@@ -55,14 +55,6 @@ public class Files_rw {
 
     public void escribir(String[] pages, String filename) {
         try {
-            int c = 0;
-
-            for (String page: pages) {
-                
-                if (page.isEmpty()==false) {
-                    c++;
-                }
-            }
             
             WritableWorkbook workbook;
             workbook = Workbook.createWorkbook(new File(filename));
@@ -72,12 +64,9 @@ public class Files_rw {
                 String page = pages[fila];
                 sheet.addCell(new jxl.write.Label(0, fila, page));
             }
-            sheet.addCell(new jxl.write.Label(0, 279, String.valueOf(c)));
+            
             workbook.write();
             workbook.close();
-
-            
-            System.out.println(c);
 
         } catch (IOException | WriteException ex) {
             Logger.getLogger(Files_rw.class.getName()).log(Level.SEVERE, null, ex);

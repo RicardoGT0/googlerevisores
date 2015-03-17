@@ -25,10 +25,11 @@ public class Google_search {
 
         String[] hp = new String[280];//HomePages
 
-        for (int i = 0; i < 300; i++) {
+        for (int i=0;i<200;i++) {
             hp = find(datos, hp);
             String filename = "homepages.xls";
             excel.escribir(hp, filename);
+
         }
 
     }
@@ -39,12 +40,7 @@ public class Google_search {
             Google results = GetGoogleResults("\"" + email + "\"");
             if (results.getResponseData() != null) {
                 url = check(results, name);
-            } /*else {//solo usar en caso de emergencia
-             results = GetGoogleResults(email);
-             if (results.getResponseData() != null) {
-             url = check(results, name);
-             }
-             }*/
+            }
 
         } catch (Exception ex) {
             Logger.getLogger(Google_search.class.getName()).log(Level.SEVERE, null, ex);
@@ -52,50 +48,57 @@ public class Google_search {
         return url;
     }
 
-    private static String finder_name(String name) {
+    private static String finder_name(String name, String email) {
         String url = "";
         try {
             Google results = GetGoogleResults("\"" + name + "\"" + " -facebook -linkedin -google+ -twitter -youtube -instagram -pinterest -misprofesores");
             if (results.getResponseData() != null) {
                 url = check(results, name);
+
+            } else {//solo usar en caso de emergencia
+                results = GetGoogleResults(email);
+                if (results.getResponseData() != null) {
+                    url = check(results, name);
+                }
+
             }
         } catch (Exception ex) {
-            Logger.getLogger(Google_search.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Google_search.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         return url;
     }
 
-    private static String[] find(String[][] datos, String[] hp) throws Exception {
+    private static String[] find(String[][] datos, String[] hp) {
 
         for (int fila = 0; fila < 278; fila++) {
+
             String email = datos[2][fila];
             String name = datos[0][fila];
             String url = "";
-            String home = hp[fila];
-            if (home == null) {
-                home = "";
-            }
-            if (home.isEmpty()) {
 
-                if (email.isEmpty()) {
-                    email = datos[1][fila];
-                    if (email.isEmpty() == false) {
-                        url = finder_email(name, email);
-                    }
-                } else {
+            if (email.isEmpty()) {
+                email = datos[1][fila];
+                if (email.isEmpty() == false) {
                     url = finder_email(name, email);
                 }
+            } else {
+                url = finder_email(name, email);
+            }
 
-                if (url.isEmpty()) {
-                    url = finder_name(name);
-                }
+            if (url.isEmpty()) {
+                url = finder_name(name, email);
+            }
 
-                System.out.println("***************************************************************");
-                System.out.println(name);
-                System.out.println(url);
+            System.out.println("***************************************************************");
+            System.out.println(name);
+            System.out.println(url);
+            
+            if (url.length()>1){
                 hp[fila] = url;
             }
+
         }
         return hp;
     }
@@ -147,7 +150,9 @@ public class Google_search {
 
         url = new URL(google + URLEncoder.encode(term, charset));
         reader = new InputStreamReader(url.openStream(), charset);
-        results = new Gson().fromJson(reader, Google.class);
+        results
+                = new Gson().fromJson(reader, Google.class
+                );
 
         return results;
     }
